@@ -1,0 +1,14 @@
+SELECT  
+    DB_NAME() AS DatabaseName,
+    dp.name AS UserName,
+    dp.type_desc AS UserType,
+    dp.authentication_type_desc AS AuthenticationType,
+    dp.sid
+FROM sys.database_principals dp
+LEFT JOIN sys.server_principals sp
+    ON dp.sid = sp.sid
+WHERE sp.sid IS NULL
+AND dp.type IN ('S','U','G')  -- SQL user, Windows user, Windows group
+AND dp.principal_id > 4       -- exclude system users
+AND dp.name NOT IN ('dbo','guest','INFORMATION_SCHEMA','sys')
+ORDER BY dp.name;
